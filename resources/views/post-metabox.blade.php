@@ -14,6 +14,7 @@
     if ($mediaOptions === [] && class_exists(\TentaPress\Media\Models\TpMedia::class)) {
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('tp_media')) {
+                $urlGenerator = app(\TentaPress\Media\Contracts\MediaUrlGenerator::class);
                 $items = \TentaPress\Media\Models\TpMedia::query()
                     ->latest('created_at')
                     ->limit(200)
@@ -28,18 +29,20 @@
                         continue;
                     }
 
-                    $url = '/storage/' . ltrim($path, '/');
+                    $url = $urlGenerator->imageUrl($item);
                     $title = trim((string) ($item->title ?? ''));
                     $original = trim((string) ($item->original_name ?? ''));
                     $label = $title !== '' ? $title : ($original !== '' ? $original : 'Media #' . $item->id);
 
-                    $mediaOptions[] = [
-                        'value' => $url,
-                        'label' => $label,
-                        'original_name' => $original,
-                        'mime_type' => $mime,
-                        'is_image' => true,
-                    ];
+                    if ($url !== null) {
+                        $mediaOptions[] = [
+                            'value' => $url,
+                            'label' => $label,
+                            'original_name' => $original,
+                            'mime_type' => $mime,
+                            'is_image' => true,
+                        ];
+                    }
                 }
             }
         } catch (\Throwable) {

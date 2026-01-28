@@ -8,11 +8,12 @@
 
         if (class_exists(\TentaPress\Media\Models\TpMedia::class)) {
             try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('tp_media')) {
-                    $items = \TentaPress\Media\Models\TpMedia::query()
-                        ->latest('created_at')
-                        ->limit(200)
-                        ->get(['id', 'title', 'original_name', 'path', 'mime_type', 'disk']);
+        if (\Illuminate\Support\Facades\Schema::hasTable('tp_media')) {
+            $urlGenerator = app(\TentaPress\Media\Contracts\MediaUrlGenerator::class);
+            $items = \TentaPress\Media\Models\TpMedia::query()
+                ->latest('created_at')
+                ->limit(200)
+                ->get(['id', 'title', 'original_name', 'path', 'mime_type', 'disk']);
 
                     foreach ($items as $item) {
                         $disk = (string) ($item->disk ?? 'public');
@@ -23,20 +24,22 @@
                             continue;
                         }
 
-                        $url = '/storage/' . ltrim($path, '/');
-                        $title = trim((string) ($item->title ?? ''));
-                        $original = trim((string) ($item->original_name ?? ''));
-                        $label = $title !== '' ? $title : ($original !== '' ? $original : 'Media #' . $item->id);
+                $url = $urlGenerator->imageUrl($item);
+                $title = trim((string) ($item->title ?? ''));
+                $original = trim((string) ($item->original_name ?? ''));
+                $label = $title !== '' ? $title : ($original !== '' ? $original : 'Media #' . $item->id);
 
-                        $mediaOptions[] = [
-                            'value' => $url,
-                            'label' => $label,
-                            'original_name' => $original,
-                            'mime_type' => $mime,
-                            'is_image' => true,
-                        ];
-                    }
+                if ($url !== null) {
+                    $mediaOptions[] = [
+                        'value' => $url,
+                        'label' => $label,
+                        'original_name' => $original,
+                        'mime_type' => $mime,
+                        'is_image' => true,
+                    ];
                 }
+            }
+        }
             } catch (\Throwable) {
                 $mediaOptions = [];
             }
