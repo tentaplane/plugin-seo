@@ -51,37 +51,38 @@
         $initialTwitter = (string) old('twitter_image', $seo->twitter_image ?? '');
     @endphp
 
-    <div class="tp-page-header">
-        <div>
-            <h1 class="tp-page-title">Edit SEO</h1>
-            <p class="tp-description">
-                <span class="font-semibold">{{ $page->title ?: '(Untitled)' }}</span>
-                <span class="tp-muted">— /{{ $page->slug }}</span>
-            </p>
-        </div>
-
-        <div class="flex gap-2">
-            <a href="{{ route('tp.seo.index') }}" class="tp-button-secondary">Back</a>
+    <div class="tp-editor space-y-6">
+        <div class="tp-page-header">
+            <div>
+                <h1 class="tp-page-title">Edit SEO</h1>
+                <p class="tp-description">
+                    <span class="font-semibold">{{ $page->title ?: '(Untitled)' }}</span>
+                    <span class="tp-muted">— /{{ $page->slug }}</span>
+                </p>
+            </div>
         </div>
     </div>
 
-    <div class="tp-metabox">
-        <div class="tp-metabox__title">Search</div>
-        <div class="tp-metabox__body">
-            <div
-                x-data="tpSeoMediaPage({
-                            options: @js($mediaOptions),
-                            indexUrl: @js($mediaIndexUrl),
-                            og: @js($initialOg),
-                            twitter: @js($initialTwitter),
-                        })"
-                x-init="init()">
-                <form
-                    method="POST"
-                    action="{{ route('tp.seo.pages.update', ['page' => $page->id]) }}"
-                    class="space-y-5">
-                    @csrf
-                    @method('PUT')
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <div class="space-y-6 lg:col-span-3">
+                <div class="tp-metabox">
+                    <div class="tp-metabox__title">Search</div>
+                    <div class="tp-metabox__body">
+                        <div
+                            x-data="tpSeoMediaPage({
+                                        options: @js($mediaOptions),
+                                        indexUrl: @js($mediaIndexUrl),
+                                        og: @js($initialOg),
+                                        twitter: @js($initialTwitter),
+                                    })"
+                            x-init="init()">
+                            <form
+                                method="POST"
+                                action="{{ route('tp.seo.pages.update', ['page' => $page->id]) }}"
+                                class="space-y-5"
+                                id="seo-form">
+                                @csrf
+                                @method('PUT')
 
                     <div class="tp-field">
                         <label class="tp-label">Title override</label>
@@ -218,9 +219,6 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button type="submit" class="tp-button-primary">Save changes</button>
-                    </div>
                 </form>
 
                 <div
@@ -298,6 +296,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+            <div class="tp-metabox">
+                <div class="tp-metabox__title">Actions</div>
+                <div class="tp-metabox__body space-y-2 text-sm">
+                    <button type="submit" form="seo-form" class="tp-button-primary w-full justify-center">
+                        Save SEO
+                    </button>
+                    <a href="{{ route('tp.seo.index') }}" class="tp-button-secondary w-full justify-center">Back</a>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
