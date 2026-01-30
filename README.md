@@ -5,7 +5,7 @@ TentaPress plugin.
 ## Plugin details
 
 - ID: `tentapress/seo`
-- Version: `0.1.2`
+- Version: `0.1.3`
 - Service provider: `TentaPress\Seo\SeoServiceProvider`
 
 ## Requirements

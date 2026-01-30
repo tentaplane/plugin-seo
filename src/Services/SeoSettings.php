@@ -13,7 +13,7 @@ final class SeoSettings
 
     public function titleTemplate(): string
     {
-        return (string) $this->get('seo.title_template', '{{ $page->title }} · {{ $tpSiteTitle }}');
+        return (string) $this->get('seo.title_template', '{{page_title}} · {{site_title}}');
     }
 
     public function defaultDescription(): string

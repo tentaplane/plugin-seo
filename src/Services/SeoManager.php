@@ -114,7 +114,7 @@ final readonly class SeoManager
             return $override;
         }
 
-        $template = (string) $this->settings->titleTemplate();
+        $template = $this->normalizeTitleTemplate((string) $this->settings->titleTemplate());
 
         $out = str_replace(
             ['{{page_title}}', '{{site_title}}'],
@@ -125,6 +125,14 @@ final readonly class SeoManager
         $out = trim(preg_replace('/\s+/', ' ', $out) ?? $out);
 
         return $out !== '' ? $out : $pageTitle;
+    }
+
+    private function normalizeTitleTemplate(string $template): string
+    {
+        $template = preg_replace('/{{\s*\$page->title\s*}}/', '{{page_title}}', $template) ?? $template;
+        $template = preg_replace('/{{\s*\$tpSiteTitle\s*}}/', '{{site_title}}', $template) ?? $template;
+
+        return $template;
     }
 
     private function resolveDescription(?string $override): string
